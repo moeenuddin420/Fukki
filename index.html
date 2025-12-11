@@ -77,7 +77,7 @@
         
         #auth-container { background: #0f172a; } .profile-img-container { width: 100px; height: 100px; margin: 0 auto 15px; position: relative; } .profile-pic { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); padding: 2px; background: #1e293b; }
         
-        /* ✅ PROFESSIONAL LOADING SCREEN (UPDATED) */
+        /* ✅ PROFESSIONAL LOADING SCREEN */
         #loading-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #0f172a; z-index: 9999; 
@@ -91,18 +91,7 @@
         @keyframes logoPulse { 0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.3)); } 50% { transform: scale(1.1); filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.6)); } 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.3)); } }
         @keyframes loadProgress { 0% { width: 0%; transform: translateX(-100%); } 50% { width: 100%; transform: translateX(0); } 100% { width: 0%; transform: translateX(100%); } }
 
-        /* ✅ PWA NOTIFICATION BANNER */
-        #notification-banner {
-            display: none; position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(30, 41, 59, 0.95); border-top: 1px solid var(--primary);
-            padding: 15px; z-index: 9999; text-align: center;
-            backdrop-filter: blur(10px); box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
-            animation: slideUp 0.5s ease-out;
-        }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .notif-text { color: #fff; margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; }
-
-        /* ✅ DOWNLOAD SITE STYLES (BROWSER MODE) */
+        /* ✅ DOWNLOAD SITE STYLES (BROWSER MODE) - BENGALI */
         #install-view { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #0f172a; z-index: 10001; 
@@ -123,6 +112,16 @@
         }
         @keyframes pulseBtn { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(6, 182, 212, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); } }
         .install-footer { position: absolute; bottom: 30px; color: var(--text-muted); font-size: 0.8rem; opacity: 0.7; }
+
+        /* ✅ NOTIFICATION POPUP MODAL */
+        #perm-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.8); z-index: 11000; 
+            display: flex; align-items: center; justify-content: center;
+        }
+        .perm-box {
+            background: #1e293b; padding: 25px; border-radius: 16px; text-align: center; max-width: 320px; width: 90%; border: 1px solid var(--primary);
+        }
     </style>
 
     <!-- Error Catcher Script (Silent Mode) -->
@@ -134,16 +133,16 @@
 </head>
 <body>
     
-    <!-- ✅ DOWNLOAD APP / LANDING PAGE VIEW (Initially Hidden via JS, used for PWA promo) -->
+    <!-- ✅ DOWNLOAD APP PAGE (BENGALI) - VISIBLE ONLY IN BROWSER -->
     <div id="install-view" class="hidden">
         <img src="https://cdn-icons-png.flaticon.com/512/3233/3233483.png" class="install-logo">
         <div class="install-title">G-ZONE</div>
-        <p class="install-desc">G-ZONE ইস্পোর্টস এ আপনাকে স্বাগতম! ফ্রি ফায়ার টুর্নামেন্ট খেলে টাকা ইনকাম করতে আমাদের অ্যাপটি ইন্সটল করুন।</p>
-        <button id="btn-install-app" class="btn-install"><i class="fas fa-download"></i> INSTALL APP</button>
-        <div class="install-footer">Secure & Verified • Version 2.1</div>
+        <p class="install-desc">G-ZONE ইস্পোর্টস এ আপনাকে স্বাগতম! ফ্রি ফায়ার টুর্নামেন্ট খেলে টাকা ইনকাম করতে অ্যাপটি ইন্সটল করুন।</p>
+        <button id="btn-install-app" class="btn-install"><i class="fas fa-download"></i> অ্যাপ ইন্সটল করুন</button>
+        <div class="install-footer">Secure & Verified • Version 2.2</div>
     </div>
 
-    <!-- ✅ PROFESSIONAL LOADING SCREEN (DEFAULT VISIBLE) -->
+    <!-- ✅ LOADING SCREEN -->
     <div id="loading-overlay">
         <div class="loader-logo-wrap">
             <img src="https://cdn-icons-png.flaticon.com/512/3233/3233483.png" class="loader-logo-img">
@@ -155,10 +154,15 @@
 
     <div id="toast-box"><i class="fas fa-info-circle" style="color:var(--primary)"></i> <span id="toast-msg"></span></div>
 
-    <!-- NOTIFICATION PERMISSION BANNER -->
-    <div id="notification-banner">
-        <div class="notif-text">🔔 আপডেট পেতে নোটিফিকেশন চালু করুন!</div>
-        <button class="btn btn-primary" onclick="enableNotifications()">Enable Notifications</button>
+    <!-- NOTIFICATION PERMISSION MODAL -->
+    <div id="perm-modal" class="hidden">
+        <div class="perm-box">
+            <i class="fas fa-bell fa-3x" style="color:var(--primary); margin-bottom:15px;"></i>
+            <h3 style="color:#fff; margin-bottom:10px;">নোটিফিকেশন চালু করুন</h3>
+            <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">ম্যাচ এবং আপডেটের খবর পেতে নোটিফিকেশন চালু করা প্রয়োজন।</p>
+            <button class="btn btn-primary" onclick="enableNotifications()">চালু করুন (Enable)</button>
+            <button class="btn btn-secondary" onclick="document.getElementById('perm-modal').classList.add('hidden')" style="margin-top:10px;">পরে করুন</button>
+        </div>
     </div>
 
     <!-- AUTH SCREEN -->
@@ -575,9 +579,10 @@
             const loader = document.getElementById('loading-overlay');
             const authContainer = document.getElementById('auth-container');
             const appContainer = document.getElementById('app-container');
+            const installView = document.getElementById('install-view');
             
-            // If loader is still visible after 4 seconds
-            if (loader && !loader.classList.contains('hidden') && loader.style.display !== 'none') {
+            // Force load only if NOT showing the download page
+            if (loader && loader.style.display !== 'none' && installView.classList.contains('hidden')) {
                 console.warn("Forcing UI load due to timeout");
                 loader.style.display = 'none'; // Force hide loader
                 
@@ -586,7 +591,7 @@
                     authContainer.classList.remove('hidden');
                 }
             }
-        }, 4000);
+        }, 5000);
 
         // --- HELPER FUNCTIONS ---
         window.showToast = (msg) => { const t = document.getElementById('toast-box'); if(t) { t.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); } else { alert(msg); } };
@@ -615,6 +620,16 @@
 
         // --- EVENT LISTENERS (SAFE WRAPPED) ---
         window.addEventListener('load', () => { 
+            const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            
+            // IF BROWSER (NOT APP): Show Download Page
+            if (!isPwa) {
+                document.getElementById('install-view').classList.remove('hidden');
+                document.getElementById('loading-overlay').style.display = 'none';
+                document.getElementById('auth-container').classList.add('hidden');
+                document.getElementById('app-container').classList.add('hidden');
+            }
+            
             history.pushState({page: 'home'}, '', ''); 
         });
 
@@ -643,9 +658,20 @@
 
         // --- AUTH & DATA LOGIC ---
         onAuthStateChanged(auth, async (user) => {
+            // IF BROWSER: Do not load app logic, stay on Download Page
+            const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            if (!isPwa) return; 
+
             if(user) {
                 if (window.AppInventor) { window.AppInventor.setWebViewString(user.uid); }
-                checkNotificationPermission(user.uid);
+                
+                // CHECK NOTIFICATION PERMISSION
+                if(Notification.permission !== "granted") {
+                    document.getElementById('perm-modal').classList.remove('hidden');
+                } else {
+                    generateToken(user.uid);
+                }
+
                 loadNotifications(user.uid);
 
                 onSnapshot(doc(db,"users",user.uid), async d => {
@@ -679,7 +705,7 @@
                 });
                 loadHomeData(); 
                 window.loadPublicCoupons(); loadWithdrawHistory(user.uid); loadConfig(); loadBroadcasts(); loadBalanceLeaderboard(); loadReferralLeaderboard();
-                loadMyMatches(user.uid); // ✅ Added missing function call
+                loadMyMatches(user.uid); 
             } else { 
                 document.getElementById('app-container').classList.add('hidden'); 
                 document.getElementById('auth-container').classList.remove('hidden'); 
@@ -906,14 +932,24 @@
         }
         function loadWithdrawHistory(uid){ onSnapshot(query(collection(db,"withdrawals"),where("userId","==",uid)),s=>{ const l = s.docs.sort((a,b)=>(b.data().time?.seconds||0)-(a.data().time?.seconds||0)); document.getElementById('withdraw-history').innerHTML = s.empty ? "<p style='text-align:center;color:#aaa'>No history</p>" : l.map(d=>{ const w=d.data(), c=w.status==='pending'?'var(--warning)':(w.status==='paid'?'var(--success)':'var(--danger)'); return `<div class="t-card" style="padding:15px;display:flex;justify-content:space-between;"><b>৳${w.amount} (${w.method})</b><span style="color:${c};font-weight:bold;">${w.status}</span></div>`; }).join(''); }); }
         
-        function checkNotificationPermission(uid) {
-            if ("Notification" in window) {
-                if (Notification.permission === "granted") { document.getElementById('notification-banner').style.display = 'none'; generateToken(uid); } 
-                else { document.getElementById('notification-banner').style.display = 'block'; }
-            }
+        window.enableNotifications = async () => { 
+            const permission = await Notification.requestPermission(); 
+            if (permission === 'granted') { 
+                document.getElementById('perm-modal').classList.add('hidden'); 
+                generateToken(auth.currentUser.uid); 
+            } 
+        };
+        
+        async function generateToken(uid) { 
+            try { 
+                const registration = await navigator.serviceWorker.ready; 
+                const currentToken = await getToken(messaging, { 
+                    vapidKey: 'BKVqRDof4xyE2oZWEvMO3CSEsCQ9QPkbiT59bnJHQLWJ0ngm5I1pirwwTsNQ94AVR3fuWNeV6WPwhi5f5hsUFyQ', 
+                    serviceWorkerRegistration: registration 
+                }); 
+                if (currentToken) await setDoc(doc(db, "users", uid), { fcmToken: currentToken }, { merge: true }); 
+            } catch (err) { console.log(err); } 
         }
-        window.enableNotifications = async () => { const permission = await Notification.requestPermission(); if (permission === 'granted') { document.getElementById('notification-banner').style.display = 'none'; generateToken(auth.currentUser.uid); } };
-        async function generateToken(uid) { try { const registration = await navigator.serviceWorker.ready; const currentToken = await getToken(messaging, { vapidKey: 'BKVqRDof4xyE2oZWEvMO3CSEsCQ9QPkbiT59bnJHQLWJ0ngm5I1pirwwTsNQ94AVR3fuWNeV6WPwhi5f5hsUFyQ', serviceWorkerRegistration: registration }); if (currentToken) await setDoc(doc(db, "users", uid), { fcmToken: currentToken }, { merge: true }); } catch (err) { console.log(err); } }
         
         function loadNotifications(uid) {
             const q = query(collection(db, "notifications"), where("targetUid", "==", uid));
