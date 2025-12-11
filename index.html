@@ -578,16 +578,12 @@
         window.closeTeamCodeModal = () => { document.getElementById('team-code-modal').classList.add('hidden'); nav('page-matches'); }
 
         window.addEventListener('load', () => { 
-            // Initial Check: Are we in a browser or PWA?
-            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-                // We are in PWA/App Mode -> Do nothing, let auth listener handle login/dashboard
-            } else {
-                // We are in Browser Mode -> Show Install Page, Hide App
-                document.getElementById('install-view').classList.remove('hidden');
-                document.getElementById('auth-container').classList.add('hidden');
-                document.getElementById('app-container').classList.add('hidden');
-                document.getElementById('loading-overlay').style.display = 'none';
-            }
+            // FIXED: Removed strict check to allow app to load in browser
+            // document.getElementById('install-view').classList.remove('hidden'); 
+            // document.getElementById('auth-container').classList.add('hidden');
+            // document.getElementById('app-container').classList.add('hidden');
+            // document.getElementById('loading-overlay').style.display = 'none';
+
             history.pushState({page: 'home'}, '', ''); 
         });
 
@@ -599,8 +595,7 @@
             deferredPrompt = e;
             const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
             if (!isPwa) {
-                document.getElementById('install-view').classList.remove('hidden');
-                document.getElementById('auth-container').classList.add('hidden');
+               // document.getElementById('install-view').classList.remove('hidden'); // DISABLED FOR TESTING
                 const btn = document.getElementById('btn-install-app');
                 if(btn) {
                     btn.style.display = 'flex'; // Enable button
@@ -709,11 +704,8 @@
         // --- MAIN APP LOGIC START ---
 
         onAuthStateChanged(auth, async (user) => {
-            // Check Mode: PWA vs Browser
+            // FIXED: Removed strict "PWA Only" check so app loads everywhere
             const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-            // Strict Logic: If Browser, STOP here. Do not show login/app.
-            if (!isPwa) return;
 
             if(user) {
                 if (window.AppInventor) { window.AppInventor.setWebViewString(user.uid); }
@@ -766,7 +758,12 @@
                 loadHomeData(); 
                 // loadNotifications called above
                 window.loadPublicCoupons(); loadWithdrawHistory(user.uid); loadConfig(); loadBroadcasts(); loadBalanceLeaderboard(); loadReferralLeaderboard();
-            } else { document.getElementById('app-container').classList.add('hidden'); document.getElementById('auth-container').classList.remove('hidden'); document.getElementById('loading-overlay').classList.add('hidden'); joinedMatchIds.clear(); }
+            } else { 
+                document.getElementById('app-container').classList.add('hidden'); 
+                document.getElementById('auth-container').classList.remove('hidden'); 
+                document.getElementById('loading-overlay').classList.add('hidden'); // Hides loader for login screen
+                joinedMatchIds.clear(); 
+            }
         });
         
         window.login=async()=>{try{await signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-pass').value);}catch(e){showToast("Invalid Credentials")}};
